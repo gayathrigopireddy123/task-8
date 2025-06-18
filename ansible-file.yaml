@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Copy project folder to remote
+      synchronize:
+        src: /var/lib/jenkins/workspace/ci-cd/
+        dest: /home/ubuntu/app/
+
+    - name: Build Docker Image
+      shell: docker build -t gayathri/myapp:v1 /home/ubuntu/app/
+
+    - name: Apply Kubernetes Deployment
+      shell: |
+        kubectl apply -f /home/ubuntu/app/deployment.yaml
+        kubectl apply -f /home/ubuntu/app/service.yaml
+
